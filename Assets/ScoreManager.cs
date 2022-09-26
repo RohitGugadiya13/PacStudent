@@ -20,6 +20,8 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] AIEnemy[] AIEnemies;
     bool timerbool, levelEnds=false;
     bool normalState = true;
+    int lives = 3;
+    [SerializeField] GameObject[] livesIMG;
     private void Start()
     {
         audioSource.PlayOneShot(BGSoundEffect);
@@ -69,10 +71,19 @@ public class ScoreManager : MonoBehaviour
         {
             if (enemiesCanDoDamage)
             {
-                defeatPanel.SetActive(true);
-                levelEnds = true;
-                Time.timeScale = 0f;
-                PlayAudioClips(2);
+                if (lives <0)
+                {
+                    defeatPanel.SetActive(true);
+                    levelEnds = true;
+                    Time.timeScale = 0f;
+                    PlayAudioClips(2);
+                }
+                else
+                {
+                    transform.GetChild(0).gameObject.SetActive(false);
+                    Invoke("RespawnPlayer", 2f);
+                    ReduceLives();
+                }
 
             }
             else
@@ -85,7 +96,19 @@ public class ScoreManager : MonoBehaviour
         }
     }
    
-
+    void ReduceLives()
+    {
+        lives--;
+        for(int i=0;i<lives;i++)
+        {
+            livesIMG[i].SetActive(false);
+        }
+    }
+    void RespawnPlayer()
+    {
+        transform.position = new Vector3(-3.38f, 0f, 0f);
+        transform.GetChild(0).gameObject.SetActive(true);
+    }
 
     void CheckVictory()
     {
