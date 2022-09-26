@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class InputManager : MonoBehaviour
 {
     [SerializeField] private GameObject item;
-    Tweener tweener;
+   public  Tweener tweener;
     List<GameObject> itemList = new List<GameObject>();
 
     public float x, y = 0;
@@ -134,7 +134,7 @@ public class InputManager : MonoBehaviour
 
         //print(upHit.collider.name);
 
-        if (upHit.collider != null)
+        if (upHit.collider != null && !Tweener.stopMovement)
         {
             switch (playerMovement)
             {

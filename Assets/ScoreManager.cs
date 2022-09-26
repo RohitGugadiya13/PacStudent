@@ -6,45 +6,32 @@ using UnityEngine.UI;
 [RequireComponent(typeof(AudioSource))]
 public class ScoreManager : MonoBehaviour
 {
+    private Animator animator;
 
-    [SerializeField] Text scoreText, powerPalletText;
-
-    [SerializeField] int targetScoresToAchieve, enemies;
-    [SerializeField] GameObject victoryPanel, defeatPanel, powwerTimerActive;
-    float powerTimer = 10;
-
-    [SerializeField] AudioSource audioSource;
-    [SerializeField] AudioClip BGSoundEffect, walkingPac, normalPalletAC, powerPalletAC, enemyKilledPlayerAC, playerKilledEnemyAC, enemyScaredState, enemyNormalState;
-
-
-    [SerializeField] AIEnemy[] AIEnemies;
-    bool timerbool, levelEnds=false;
-    bool normalState = true;
-    int lives = 3;
-    [SerializeField] GameObject[] livesIMG;
     private void Start()
     {
-        audioSource.PlayOneShot(BGSoundEffect);
+        GameManager.instance.audioSource.PlayOneShot(GameManager.instance.BGSoundEffect);
+        animator = GetComponentInChildren<Animator>();
     }
 
-    int score;
+   
 
     private void Update()
     {
-        if(timerbool)
+        if(GameManager.instance.timerbool)
         PowerTimerFunction();
 
         CheckVictory();
-        if(!audioSource.isPlaying && levelEnds==false)
+        if(!GameManager.instance.audioSource.isPlaying && GameManager.instance.levelEnds ==false)
             PlayAudioClips(4);
 
     }
-    [SerializeField] bool enemiesCanDoDamage = true;
+   
     void OnTriggerEnter2D(Collider2D collider2D)
     {
         if (collider2D.CompareTag("NormalPellet"))
         {
-            scoreText.text = (++score).ToString();
+            GameManager.instance.scoreText.text = (++GameManager.instance.score).ToString();
             //CheckVictory();
             Destroy(collider2D.gameObject);
             PlayAudioClips(0);
@@ -52,12 +39,12 @@ public class ScoreManager : MonoBehaviour
 
         else if (collider2D.CompareTag("PowerPellet"))
         {
-            timerbool = true;
-            powwerTimerActive.SetActive(true);
-            scoreText.text = (++score).ToString();
+            GameManager.instance.timerbool = true;
+            GameManager.instance.powwerTimerActive.SetActive(true);
+            GameManager.instance.scoreText.text = (++GameManager.instance.score).ToString();
             //CheckVictory();
-            enemiesCanDoDamage = false;
-            foreach (AIEnemy aIEnemy in AIEnemies)
+            GameManager.instance.enemiesCanDoDamage = false;
+            foreach (AIEnemy aIEnemy in GameManager.instance.AIEnemies)
             {
                 aIEnemy.InScareState();
                 PlayAudioClips(5);
@@ -69,26 +56,45 @@ public class ScoreManager : MonoBehaviour
 
         else if (collider2D.CompareTag("Enemy"))
         {
-            if (enemiesCanDoDamage)
+            if (GameManager.instance.enemiesCanDoDamage)
             {
-                if (lives <0)
+                for (int i = 0; i < GameManager.instance.lives; i++)
                 {
-                    defeatPanel.SetActive(true);
-                    levelEnds = true;
+                    GameManager.instance.livesIMG[i].SetActive(false);
+                }
+
+                GameManager.instance.lives -= 1;
+               
+                for (int i = 0; i < GameManager.instance.lives; i++)
+                {
+                    GameManager.instance.livesIMG[i].SetActive(true);
+                }
+                if (GameManager.instance.lives ==0)
+                {
+                    GameManager.instance.defeatPanel.SetActive(true);
+                    GameManager.instance.levelEnds = true;
                     Time.timeScale = 0f;
                     PlayAudioClips(2);
                 }
                 else
                 {
-                    transform.GetChild(0).gameObject.SetActive(false);
-                    Invoke("RespawnPlayer", 2f);
-                    ReduceLives();
+                    print("INELSE");
+                  //  transform.GetChild(0).gameObject.SetActive(false);
+                    //  Invoke("RespawnPlayer", 2f);
+                    //  RespawnPlayer();
+                    GameManager.instance.instActive();
+                    //    ReduceLives();
+                    this.GetComponent<CircleCollider2D>().enabled = false;
+                    GameManager.instance.deadANim.gameObject.SetActive(true);
+                    GameManager.instance.deadANim.gameObject.transform.position = this.transform.position;
+                      Destroy(this.gameObject);
+
                 }
 
             }
             else
             {
-                enemies++;
+                GameManager.instance.enemies++;
                 Destroy(collider2D.gameObject);
                 PlayAudioClips(3);
 
@@ -98,24 +104,26 @@ public class ScoreManager : MonoBehaviour
    
     void ReduceLives()
     {
-        lives--;
-        for(int i=0;i<lives;i++)
+        GameManager.instance.lives-=1;
+        for(int i=0;i< GameManager.instance.lives;i++)
         {
-            livesIMG[i].SetActive(false);
+            GameManager.instance.livesIMG[i].SetActive(false);
         }
     }
-    void RespawnPlayer()
-    {
-        transform.position = new Vector3(-3.38f, 0f, 0f);
-        transform.GetChild(0).gameObject.SetActive(true);
-    }
+    //void RespawnPlayer()
+    //{
+    //    print("Respawn");
+    //    GameManager.instance.InS();
+    //    //transform.position = new Vector3(-0.3f, 0f, 0f);
+    //    //transform.GetChild(0).gameObject.SetActive(true);
+    //}
 
     void CheckVictory()
     {
-        if (score >= targetScoresToAchieve || enemies == 4)
+        if (GameManager.instance.score >= GameManager.instance.targetScoresToAchieve || GameManager.instance.enemies == 4)
         {
-            victoryPanel.SetActive(true);
-            levelEnds = true;
+            GameManager.instance.victoryPanel.SetActive(true);
+            GameManager.instance.levelEnds = true;
             Time.timeScale = 1;
         }
     }
@@ -126,25 +134,25 @@ public class ScoreManager : MonoBehaviour
         switch (_index)
         {
             case 0:
-                audioSource.PlayOneShot(normalPalletAC);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.normalPalletAC);
                 break;
             case 1:
-                audioSource.PlayOneShot(powerPalletAC);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.powerPalletAC);
                 break;
             case 2:
-                audioSource.PlayOneShot(enemyKilledPlayerAC);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.enemyKilledPlayerAC);
                 break;
             case 3:
-                audioSource.PlayOneShot(playerKilledEnemyAC);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.playerKilledEnemyAC);
                 break;
             case 4:
-                audioSource.PlayOneShot(walkingPac);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.walkingPac);
                 break;
             case 5:
-                audioSource.PlayOneShot(enemyScaredState);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.enemyScaredState);
                 break;
             case 6:
-                audioSource.PlayOneShot(enemyNormalState);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.enemyNormalState);
                 break;
 
         }
@@ -153,27 +161,27 @@ public class ScoreManager : MonoBehaviour
   
     void WatchOutFromEnemiesNow()
     {
-        enemiesCanDoDamage = true;
+        GameManager.instance.enemiesCanDoDamage = true;
     }
 
     void PowerTimerFunction()
     {
-        powerTimer -= Time.deltaTime;
+        GameManager.instance.powerTimer -= Time.deltaTime;
 
-        if (powerTimer <= 0)
+        if (GameManager.instance.powerTimer <= 0)
         {
-            if (normalState == true)
+            if (GameManager.instance.normalState == true)
             {
-                audioSource.PlayOneShot(enemyNormalState);
+                GameManager.instance.audioSource.PlayOneShot(GameManager.instance.enemyNormalState);
             }
-            powerTimer = 0;
-            powwerTimerActive.SetActive(false);
-            enemiesCanDoDamage = true;
-            normalState = false;
+            GameManager.instance.powerTimer = 0;
+            GameManager.instance.powwerTimerActive.SetActive(false);
+            GameManager.instance.enemiesCanDoDamage = true;
+            GameManager.instance.normalState = false;
 
         }
-        
-        powerPalletText.text = "Power Ends in : " + powerTimer.ToString("0");
+
+        GameManager.instance.powerPalletText.text = "Power Ends in : " + GameManager.instance.powerTimer.ToString("0");
         
     }
 }
