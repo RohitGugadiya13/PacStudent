@@ -37,6 +37,15 @@ public class ScoreManager : MonoBehaviour
             PlayAudioClips(0);
         }
 
+        else if (collider2D.CompareTag("cherry"))
+        {
+            GameManager.instance.score += 200;
+            GameManager.instance.scoreText.text = (GameManager.instance.score).ToString();
+            //CheckVictory();
+            Destroy(collider2D.gameObject);
+            PlayAudioClips(0);
+        }
+
         else if (collider2D.CompareTag("PowerPellet"))
         {
             GameManager.instance.timerbool = true;
