@@ -19,6 +19,7 @@ public class InputManager : MonoBehaviour
     public LayerMask layerToIgnore;
 
     Animator animator;
+    [SerializeField]float speed = 2f;
 
 
 
@@ -55,7 +56,7 @@ public class InputManager : MonoBehaviour
         Debug.DrawLine(transform.position, upHit.point, Color.white);
         Debug.DrawLine(transform.position, downHit.point, Color.yellow);
         Debug.DrawLine(transform.position, leftHit.point, Color.green);
-        Debug.DrawLine(transform.position, rightHit.point, Color.grey);
+        Debug.DrawLine(transform.position, rightHit.point, Color.blue);
 
         if (Input.GetKeyDown(KeyCode.W) && upDistance > .6f)
         {
@@ -69,7 +70,7 @@ public class InputManager : MonoBehaviour
         {
             MoveRight();
         }
-        else if (Input.GetKeyDown(KeyCode.S) && leftDistance > .6f)
+        else if (Input.GetKeyDown(KeyCode.S) && downDistance > .6f)
         {
             MoveDown();
         }
@@ -78,9 +79,9 @@ public class InputManager : MonoBehaviour
         {
             for (int i = 0; i < itemList.Count; i++)
             {
-                if (!tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), 1f))
+                if (!tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f)))*speed))
                 {
-                    tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), 1f);
+                    tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f))) * speed);
                     var tempItem = itemList[i];
                     itemList.RemoveAt(i);
                     itemList.Insert(itemList.Count, tempItem);

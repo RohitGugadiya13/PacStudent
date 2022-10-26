@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public Text scoreText, powerPalletText;
+    public GameObject cherryImage;
 
     public int targetScoresToAchieve, enemies;
     public GameObject victoryPanel, defeatPanel, powwerTimerActive;
@@ -30,6 +31,11 @@ public class GameManager : MonoBehaviour
     private Animator animator;
 
     public GameObject deadANim;
+
+    [Header("Cherry")]
+    public Transform pointsTransform;
+    public GameObject cherryPrefab;
+    public int cherryCount = 0;
     private void Awake()
     {
         if (instance == null)
@@ -41,6 +47,8 @@ public class GameManager : MonoBehaviour
     {
         animator = GetComponentInChildren<Animator>();
 
+        InvokeRepeating(nameof(InstantiateCherry), 10f, 10f);
+
     }
     public void instActive() {
        // animator.SetBool("IsDead", true);
@@ -51,9 +59,20 @@ public class GameManager : MonoBehaviour
       //  animator.SetBool("IsDead", false);
         InS();
     }
+
+    void InstantiateCherry()
+    {
+        if (cherryCount != 0) return;
+        cherryCount++;
+        cherryImage.SetActive(false);
+        var randomPoint = pointsTransform.GetChild(Random.Range(0, pointsTransform.childCount - 1));
+        var randomPointSubstitute = randomPoint.transform.position;
+        Destroy(randomPoint.gameObject);
+        var positionToInstantiateCherry = Instantiate(cherryPrefab, randomPointSubstitute, Quaternion.identity);
+    }
     public void InS() {
         deadANim.SetActive(false);
-GameObject go= Instantiate(Pacman, new Vector3(-0.3f, 0, 0), Quaternion.identity);
+GameObject go= Instantiate(Pacman, new Vector3(-8.838f, 7.3f, 0), Quaternion.identity);
         go.transform.GetChild(0).gameObject.SetActive(true);
         go.GetComponent<CircleCollider2D>().enabled = true;
     }

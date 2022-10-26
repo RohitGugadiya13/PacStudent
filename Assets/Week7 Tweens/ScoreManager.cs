@@ -40,6 +40,9 @@ public class ScoreManager : MonoBehaviour
         else if (collider2D.CompareTag("cherry"))
         {
             GameManager.instance.score += 200;
+            GameManager.instance.cherryCount = 0;
+            GameManager.instance.cherryImage.SetActive(true);
+
             GameManager.instance.scoreText.text = (GameManager.instance.score).ToString();
             //CheckVictory();
             Destroy(collider2D.gameObject);
@@ -95,7 +98,7 @@ public class ScoreManager : MonoBehaviour
                     //    ReduceLives();
                     this.GetComponent<CircleCollider2D>().enabled = false;
                     GameManager.instance.deadANim.gameObject.SetActive(true);
-                    GameManager.instance.deadANim.gameObject.transform.position = this.transform.position;
+                    //GameManager.instance.deadANim.gameObject.transform.position = this.transform.position;
                       Destroy(this.gameObject);
 
                 }

@@ -19,6 +19,7 @@ public class AIEnemy : MonoBehaviour
 
     Vector3 previousPosition;
     public float timeToCheck;
+    [SerializeField] float speed =.2f;
 
 
     // Start is called before the first frame update
@@ -32,6 +33,13 @@ public class AIEnemy : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+
+        AIMovement();
+
+    }
+
+    private void AIMovement()
     {
         RaycastHit2D upHit = Physics2D.Raycast(transform.position, Vector3.up, 100f, ~layerToIgnore);
         RaycastHit2D downHit = Physics2D.Raycast(transform.position, Vector3.down, 100f, ~layerToIgnore);
@@ -143,9 +151,9 @@ public class AIEnemy : MonoBehaviour
         {
             for (int i = 0; i < itemList.Count; i++)
             {
-                if (!tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), 1f))
+                if (!tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f))) * speed))
                 {
-                    tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), 1f);
+                    tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f))) * speed);
                     var tempItem = itemList[i];
                     itemList.RemoveAt(i);
                     itemList.Insert(itemList.Count, tempItem);
@@ -156,10 +164,7 @@ public class AIEnemy : MonoBehaviour
                 }
             }
         }
-
     }
-
-
 
     private void MoveDown()
     {
