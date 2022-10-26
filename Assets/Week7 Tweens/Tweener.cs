@@ -7,6 +7,7 @@ public class Tweener : MonoBehaviour
     //private Tween activeTween;
     public List<Tween> activeTweens = new List<Tween>();
     public Tween activeTween;
+    public static bool stopMovement = false;
 
     // Start is called before the first frame update
     void Start()
@@ -18,7 +19,7 @@ public class Tweener : MonoBehaviour
     void FixedUpdate()
     {
         //print(activeTweens.Count + " COUNT ");
-        if (activeTweens.Count > 0)
+        if (activeTweens.Count > 0 && !stopMovement)
         {
             float dist = Vector3.Distance(activeTweens[0]._Target.transform.position, activeTweens[0]._EndPos);
             if (dist > 0.1f)
