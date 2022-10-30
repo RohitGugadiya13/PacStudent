@@ -103,6 +103,7 @@ public class ScoreManager : MonoBehaviour
                     GameManager.instance.instActive();
                     //    ReduceLives();
                     this.GetComponent<CircleCollider2D>().enabled = false;
+                    GameManager.instance.deadANim.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
                     GameManager.instance.deadANim.gameObject.SetActive(true);
                     //GameManager.instance.deadANim.gameObject.transform.position = this.transform.position;
                     Destroy(this.gameObject);
