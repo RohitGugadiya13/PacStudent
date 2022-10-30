@@ -96,8 +96,8 @@ public class GameManager : MonoBehaviour
         cherryImage.SetActive(false);
         var randomPoint = pointsTransform.GetChild(Random.Range(0, pointsTransform.childCount - 1));
         var randomPointSubstitute = randomPoint.transform.position;
-        Destroy(randomPoint.gameObject);
-        var positionToInstantiateCherry = Instantiate(cherryPrefab, randomPointSubstitute, Quaternion.identity);
+        //Destroy(randomPoint.gameObject);
+        Instantiate(cherryPrefab, new Vector3(randomPointSubstitute.x, randomPointSubstitute.y, 0f), Quaternion.identity);
     }
     public void InS()
     {
