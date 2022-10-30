@@ -14,24 +14,26 @@ public class ScoreManager : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
     }
 
-   
+
 
     private void Update()
     {
-        if(GameManager.instance.timerbool)
-        PowerTimerFunction();
+        if (GameManager.instance.timerbool)
+            PowerTimerFunction();
 
         CheckVictory();
-        if(!GameManager.instance.audioSource.isPlaying && GameManager.instance.levelEnds ==false)
+        if (!GameManager.instance.audioSource.isPlaying && GameManager.instance.levelEnds == false)
             PlayAudioClips(4);
 
     }
-   
+
     void OnTriggerEnter2D(Collider2D collider2D)
     {
         if (collider2D.CompareTag("NormalPellet"))
         {
-            GameManager.instance.scoreText.text = (++GameManager.instance.score).ToString();
+            GameManager.instance.scoreText.text = "Score: " + (GameManager.instance.score += 10).ToString();
+            if (GameManager.instance.score > GameManager.instance.highestScoreCount)
+                GameManager.instance.highestScore.text = "Highest Score: " + GameManager.instance.score.ToString();
             //CheckVictory();
             Destroy(collider2D.gameObject);
             PlayAudioClips(0);
@@ -39,12 +41,14 @@ public class ScoreManager : MonoBehaviour
 
         else if (collider2D.CompareTag("cherry"))
         {
-            GameManager.instance.score += 200;
             GameManager.instance.cherryCount = 0;
             GameManager.instance.cherryImage.SetActive(true);
 
-            GameManager.instance.scoreText.text = (GameManager.instance.score).ToString();
+            GameManager.instance.scoreText.text = "Score: " + (GameManager.instance.score += 100).ToString();
+            if (GameManager.instance.score > GameManager.instance.highestScoreCount)
+                GameManager.instance.highestScore.text = "Highest Score: " + GameManager.instance.score.ToString();
             //CheckVictory();
+
             Destroy(collider2D.gameObject);
             PlayAudioClips(0);
         }
@@ -53,14 +57,16 @@ public class ScoreManager : MonoBehaviour
         {
             GameManager.instance.timerbool = true;
             GameManager.instance.powwerTimerActive.SetActive(true);
-            GameManager.instance.scoreText.text = (++GameManager.instance.score).ToString();
+            GameManager.instance.scoreText.text = "Score: " + (GameManager.instance.score += 20).ToString();
+            if (GameManager.instance.score > GameManager.instance.highestScoreCount)
+                GameManager.instance.highestScore.text = "Highest Score: " + GameManager.instance.score.ToString();
             //CheckVictory();
             GameManager.instance.enemiesCanDoDamage = false;
             foreach (AIEnemy aIEnemy in GameManager.instance.AIEnemies)
             {
                 aIEnemy.InScareState();
                 PlayAudioClips(5);
-                
+
             }
             Destroy(collider2D.gameObject);
             PlayAudioClips(1);
@@ -76,12 +82,12 @@ public class ScoreManager : MonoBehaviour
                 }
 
                 GameManager.instance.lives -= 1;
-               
+
                 for (int i = 0; i < GameManager.instance.lives; i++)
                 {
                     GameManager.instance.livesIMG[i].SetActive(true);
                 }
-                if (GameManager.instance.lives ==0)
+                if (GameManager.instance.lives == 0)
                 {
                     GameManager.instance.defeatPanel.SetActive(true);
                     GameManager.instance.levelEnds = true;
@@ -91,7 +97,7 @@ public class ScoreManager : MonoBehaviour
                 else
                 {
                     print("INELSE");
-                  //  transform.GetChild(0).gameObject.SetActive(false);
+                    //  transform.GetChild(0).gameObject.SetActive(false);
                     //  Invoke("RespawnPlayer", 2f);
                     //  RespawnPlayer();
                     GameManager.instance.instActive();
@@ -99,7 +105,7 @@ public class ScoreManager : MonoBehaviour
                     this.GetComponent<CircleCollider2D>().enabled = false;
                     GameManager.instance.deadANim.gameObject.SetActive(true);
                     //GameManager.instance.deadANim.gameObject.transform.position = this.transform.position;
-                      Destroy(this.gameObject);
+                    Destroy(this.gameObject);
 
                 }
 
@@ -113,11 +119,11 @@ public class ScoreManager : MonoBehaviour
             }
         }
     }
-   
+
     void ReduceLives()
     {
-        GameManager.instance.lives-=1;
-        for(int i=0;i< GameManager.instance.lives;i++)
+        GameManager.instance.lives -= 1;
+        for (int i = 0; i < GameManager.instance.lives; i++)
         {
             GameManager.instance.livesIMG[i].SetActive(false);
         }
@@ -132,11 +138,13 @@ public class ScoreManager : MonoBehaviour
 
     void CheckVictory()
     {
-        if (GameManager.instance.score >= GameManager.instance.targetScoresToAchieve || GameManager.instance.enemies == 4)
+        if (GameManager.instance.palletPoints.childCount <= 0)
         {
             GameManager.instance.victoryPanel.SetActive(true);
             GameManager.instance.levelEnds = true;
             Time.timeScale = 1;
+            if (GameManager.instance.timeCount > GameManager.instance.highestTimeCount) PlayerPrefs.SetInt("HighestTime", GameManager.instance.timeCount);
+            if (GameManager.instance.score > GameManager.instance.highestScoreCount) PlayerPrefs.SetInt("HighestScore", GameManager.instance.score);
         }
     }
 
@@ -169,8 +177,8 @@ public class ScoreManager : MonoBehaviour
 
         }
     }
-    
-  
+
+
     void WatchOutFromEnemiesNow()
     {
         GameManager.instance.enemiesCanDoDamage = true;
@@ -194,6 +202,6 @@ public class ScoreManager : MonoBehaviour
         }
 
         GameManager.instance.powerPalletText.text = "Power Ends in : " + GameManager.instance.powerTimer.ToString("0");
-        
+
     }
 }
