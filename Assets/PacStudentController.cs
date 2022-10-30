@@ -5,6 +5,9 @@ using UnityEngine;
 public class PacStudentController : MonoBehaviour
 {
     [SerializeField] private GameObject item;
+    [SerializeField] float speed = 2f;
+    [SerializeField] float distanceOffset = 7;
+
     public Tweener tweener;
     List<GameObject> itemList = new List<GameObject>();
 
@@ -18,9 +21,9 @@ public class PacStudentController : MonoBehaviour
 
 
     public LayerMask layerToIgnore;
-    [SerializeField] float speed = 2f;
 
     float upDistance, downDistance, leftDistance, rightDistance = 0f;
+    public bool shallKeepGoing = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +34,7 @@ public class PacStudentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W) )
+        if (Input.GetKeyDown(KeyCode.W))
         {
             lastInput = Movement.up;
         }
@@ -43,48 +46,56 @@ public class PacStudentController : MonoBehaviour
         {
             lastInput = Movement.right;
         }
-        else if (Input.GetKeyDown(KeyCode.S) )
+        else if (Input.GetKeyDown(KeyCode.S))
         {
             lastInput = Movement.down;
         }
         CheckForCollisions();
 
         for (int i = 0; i < itemList.Count; i++)
+        {
+            if (!tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f))) * speed))
             {
-                if (!tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f))) * speed))
-                {
-                    tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f))) * speed);
-                    var tempItem = itemList[i];
-                    itemList.RemoveAt(i);
-                    itemList.Insert(itemList.Count, tempItem);
-                }
-                else
-                {
-                    DecideNextMoveDirection();
-                    break;
-                }
+                tweener.AddTween(itemList[i].transform, itemList[i].transform.position, new Vector3(x, y, 0.0f), (Vector3.Distance(itemList[i].transform.position, new Vector3(x, y, 0.0f))) * speed);
+                var tempItem = itemList[i];
+                itemList.RemoveAt(i);
+                itemList.Insert(itemList.Count, tempItem);
             }
+            else
+            {
+                DecideNextMoveDirection();
+                break;
+            }
+        }
     }
 
     private void DecideNextMoveDirection()
-    { 
+    {
         switch (lastInput)
         {
             case Movement.up:
+                if (!shallKeepGoing) { lastInput = Movement.none; break; }
+                isMoving = true;
                 currentInput = Movement.up;
-                y = Mathf.Clamp(y + 1, -7f, 7f);
+                y = Mathf.Clamp(y + 0.25f, -6.25f, 6.25f);
                 break;
             case Movement.down:
+                if (!shallKeepGoing) { lastInput = Movement.none; break; }
+                isMoving = true;
                 currentInput = Movement.down;
-               y = Mathf.Clamp(y - 1, -7f, 7f);
+                y = Mathf.Clamp(y - 0.25f, -6.25f, 6.25f);
                 break;
             case Movement.left:
+                if (!shallKeepGoing) { lastInput = Movement.none; break; }
+                isMoving = true;
                 currentInput = Movement.left;
-                x = Mathf.Clamp(x - 1, -7f, 7f);
+                x = Mathf.Clamp(x - 0.25f, -7f, 7f);
                 break;
             case Movement.right:
+                if (!shallKeepGoing) { lastInput = Movement.none; break; }
+                isMoving = true;
                 currentInput = Movement.right;
-                x = Mathf.Clamp(x + 1, -7f, 7f);
+                x = Mathf.Clamp(x + 0.25f, -7f, 7f);
                 break;
         }
 
@@ -92,20 +103,55 @@ public class PacStudentController : MonoBehaviour
 
     void CheckForCollisions()
     {
-        RaycastHit2D upHit = Physics2D.Raycast(transform.position, Vector3.up, 100f, ~layerToIgnore);
-        RaycastHit2D downHit = Physics2D.Raycast(transform.position, Vector3.down, 100f, ~layerToIgnore);
-        RaycastHit2D leftHit = Physics2D.Raycast(transform.position, Vector3.left, 100f, ~layerToIgnore);
-        RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector3.right, 100f, ~layerToIgnore);
-
-        upDistance = Vector3.Distance(transform.position, upHit.collider.transform.position);
-        downDistance = Vector3.Distance(transform.position, downHit.collider.transform.position);
-        leftDistance = Vector3.Distance(transform.position, leftHit.collider.transform.position);
-        rightDistance = Vector3.Distance(transform.position, rightHit.collider.transform.position);
-
+        RaycastHit2D upHit = Physics2D.Raycast(transform.position, transform.up, 100f, ~layerToIgnore);
+        RaycastHit2D downHit = Physics2D.Raycast(transform.position, transform.up * -1f, 100f, ~layerToIgnore);
+        RaycastHit2D leftHit = Physics2D.Raycast(transform.position, transform.right * -1f, 100f, ~layerToIgnore);
+        RaycastHit2D rightHit = Physics2D.Raycast(transform.position, transform.right, 100f, ~layerToIgnore);
 
         Debug.DrawLine(transform.position, upHit.point, Color.white);
         Debug.DrawLine(transform.position, downHit.point, Color.yellow);
         Debug.DrawLine(transform.position, leftHit.point, Color.green);
         Debug.DrawLine(transform.position, rightHit.point, Color.blue);
+
+        switch (lastInput)
+        {
+            case Movement.up:
+                if (upHit) shallKeepGoing = true;
+                else
+                    if (tweener.activeTweens.Count > 0)
+                {
+                    shallKeepGoing = false;
+                    tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y;
+                }
+                break;
+            case Movement.down:
+                if (downHit) shallKeepGoing = true;
+                else
+                    if (tweener.activeTweens.Count > 0)
+                {
+                    shallKeepGoing = false;
+                    tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y;
+                }
+                break;
+            case Movement.left:
+                if (leftHit) shallKeepGoing = true;
+                else
+                    if (tweener.activeTweens.Count > 0)
+                {
+                    shallKeepGoing = false;
+                    tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y;
+                }
+                break;
+            case Movement.right:
+                if (rightHit) shallKeepGoing = true;
+                else
+                    if (tweener.activeTweens.Count > 0)
+                {
+                    shallKeepGoing = false;
+                    tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y;
+                }
+                break;
+        }
+
     }
 }

@@ -32,11 +32,11 @@ public class LevelGenerator : MonoBehaviour
             {
                 if (levelMap[x, y] == 5)
                 {
-                    Instantiate(standardPallet, new Vector3(x, y, 0), Quaternion.identity);
+                    Instantiate(standardPallet, new Vector3(x, y, 0), Quaternion.identity, transform);
                 }
                 else if (levelMap[x, y] == 6)
                 {
-                    Instantiate(powerPallet, new Vector3(x, y, 0), Quaternion.identity);
+                    Instantiate(powerPallet, new Vector3(x, y, 0), Quaternion.identity, transform);
                 }
             }
         }

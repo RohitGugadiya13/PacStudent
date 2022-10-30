@@ -168,7 +168,6 @@ public class AIEnemy : MonoBehaviour
 
     private void MoveDown()
     {
-        animator.SetBool("GameStarted", true);
         if (tweener.activeTweens.Count > 0) { tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y; }
         transform.rotation = Quaternion.Euler(0, 0, 180);
         enemyMovement = Movement.down;
@@ -176,7 +175,6 @@ public class AIEnemy : MonoBehaviour
 
     private void MoveRight()
     {
-        animator.SetBool("GameStarted", true);
         if (tweener.activeTweens.Count > 0) { tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y; }
         transform.rotation = Quaternion.Euler(0, 0, -90);
         enemyMovement = Movement.right;
@@ -184,7 +182,6 @@ public class AIEnemy : MonoBehaviour
 
     private void MoveLeft()
     {
-        animator.SetBool("GameStarted", true);
         if (tweener.activeTweens.Count > 0) { tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y; }
         transform.rotation = Quaternion.Euler(0, 0, 90);
         enemyMovement = Movement.left;
@@ -192,7 +189,6 @@ public class AIEnemy : MonoBehaviour
 
     private void MoveUp()
     {
-        animator.SetBool("GameStarted", true);
         if (tweener.activeTweens.Count > 0) { tweener.activeTweens.RemoveAt(0); x = transform.position.x; y = transform.position.y; }
         transform.rotation = Quaternion.Euler(0, 0, 0);
         enemyMovement = Movement.up;
