@@ -52,13 +52,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item: {fileID: 668715866998650815}
   tweener: {fileID: 0}
-  x: -0.338
-  y: 2.6
+  x: -8.838
+  y: 7.3
   topOffset: 0.001
   playerMovement: 4
   layerToIgnore:
     serializedVersion: 2
     m_Bits: 64
+  speed: 0.2
 --- !u!114 &668715866998650812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,7 +312,7 @@ Animator:
   m_GameObject: {fileID: 668715867146446580}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5c48add479ec71f4e94f715951dfa2b7, type: 2}
+  m_Controller: {fileID: 9100000, guid: 93c01d3874a2d984ea1bc54dada3e502, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

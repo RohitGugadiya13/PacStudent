@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/StartScene.unity
     guid: c684eef6b4fc6de45a51cfe22654a559
   - enabled: 1
-    path: Assets/Scenes/PacStudent 2.unity
+    path: Assets/Scenes/PacStudent.unity
     guid: 520818b80e1f33040964a817511688bb
   - enabled: 1
     path: Assets/Scenes/InnovationScene.unity
